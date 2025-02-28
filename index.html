@@ -1,10 +1,268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfect Interactive Flipbook</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #d3cce3, #e9e4f0);
+      font-family: 'Georgia', serif;
+      overflow: hidden;
+    }
+
+    .book-container {
+      perspective: 2000px;
+      padding: 40px;
+      position: relative;
+    }
+
+    .book {
+      width: 500px;
+      height: 700px;
+      position: relative;
+      transform-style: preserve-3d;
+    }
+
+    .page {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-style: preserve-3d;
+      transition: transform 1s ease-in-out;
+      transform-origin: left center;
+      cursor: pointer;
+    }
+
+    .page-front, .page-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      border-radius: 0 15px 15px 0;
+      overflow-y: auto;
+    }
+
+    .page-front {
+      background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+      z-index: 1;
+      border: 1px solid #ddd;
+    }
+
+    .page-back {
+      background: linear-gradient(to bottom, #fffef7, #f8f6e9);
+      transform: rotateY(180deg);
+      z-index: 0;
+    }
+
+    .page {
+      transform: rotateY(0deg);
+    }
+
+    .flipped {
+      transform: rotateY(-180deg);
+    }
+
+    .cover .page-front {
+      background: linear-gradient(45deg, #8b0000, #b22222);
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .inner-page .page-front {
+      background: linear-gradient(to bottom, #fffef7, #f8f6e9);
+      color: #333;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .inner-page h2 {
+      margin-bottom: 20px;
+      color: #8b0000;
+      font-size: 22px;
+    }
+
+    .page-back {
+      font-size: 16px;
+      color: #555;
+    }
+
+    .controls {
+      position: absolute;
+      bottom: 20px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #8b0000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .controls button:hover {
+      background-color: #b22222;
+    }
+
+    .controls button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 600px) {
+      .book {
+        width: 300px;
+        height: 450px;
+      }
+      .page-front, .page-back {
+        font-size: 12px;
+        padding: 20px;
+      }
+      .cover .page-front {
+        font-size: 20px;
+      }
+      .inner-page h2 {
+        font-size: 16px;
+      }
+      .controls button {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
+<div class="book-container">
+  <div class="book" id="book">
+    <div class="page cover" onclick="navigateToPage(0)">
+      <div class="page-front">My Flipbook<br><br>Click to Open or Use Buttons</div>
+      <div class="page-back">Start of the Journey</div>
+    </div>
+    <div class="page inner-page" onclick="navigateToPage(1)">
+      <div class="page-front">
+        <h2>Story 1: A Busy Morning</h2>
+        <p>Lisa woke up late. She looked at the clock—7:30 AM! She had only 30 minutes to get ready for school. She quickly jumped out of bed, brushed her teeth, and got dressed.</p>
+        <p>"Mom, where’s my schoolbag?" she shouted.</p>
+        <p>"It’s in the living room!" her mother replied.</p>
+        <p>Lisa grabbed her bag, took an apple, and ran to the bus stop. When she got there, the bus had just left. She sighed. Now she had to walk to school. It was not a good start to the day!</p>
+      </div>
+      <div class="page-back">End of Story 1</div>
+    </div>
+    <div class="page inner-page" onclick="navigateToPage(2)">
+      <div class="page-front">
+        <h2>Story 2: Lost in Rome</h2>
+        <p>James was visiting Rome for the first time. He loved the ancient buildings and delicious food. One afternoon, he decided to explore the city alone. He walked through small streets, looking at shops and cafés.</p>
+        <p>After an hour, he realized he didn’t know where he was. He checked his phone—no battery! He didn’t speak Italian, so he couldn’t ask for help easily.</p>
+        <p>Finally, he saw a police officer and showed him the address of his hotel. The officer smiled and pointed in the right direction. James laughed—next time, he would bring a map!</p>
+      </div>
+      <div class="page-back">End of Story 2</div>
+    </div>
+    <div class="page inner-page" onclick="navigateToPage(3)">
+      <div class="page-front">
+        <h2>Story 3: The Hidden Cave</h2>
+        <p>Mia and her brother Tom were hiking in the mountains when they found a small, dark cave. "Let’s go inside!" Tom said excitedly.</p>
+        <p>They took out their flashlights and carefully stepped in. The cave was cold and quiet. Suddenly, Mia saw something shiny. It was an old coin!</p>
+        <p>"Wow! This must be ancient," she whispered. They took a few more steps and saw an old wooden box. But before they could open it, they heard a noise outside. Were they alone?</p>
+      </div>
+      <div class="page-back">End of Story 3</div>
+    </div>
+    <div class="page inner-page" onclick="navigateToPage(4)">
+      <div class="page-front">
+        <h2>Story 4: The Missing Necklace</h2>
+        <p>Mrs. Carter was an old woman who lived in a big house. One day, she called the police. "My diamond necklace is missing!" she said.</p>
+        <p>Detective Harris arrived and looked around. There was no sign of a break-in. He asked the maid, "Did you see anything unusual?"</p>
+        <p>The maid hesitated. "Well… Mr. Carter’s cat was in the bedroom last night. It loves shiny things." The detective checked under the bed. There it was—the necklace! The cat had stolen it! Mrs. Carter laughed. "Mystery solved!"</p>
+      </div>
+      <div class="page-back">End of Story 4</div>
+    </div>
+    <div class="page cover" onclick="navigateToPage(5)">
+      <div class="page-front">The End</div>
+      <div class="page-back">Thank You for Reading!</div>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="prevBtn" onclick="prevPage()">Previous</button>
+    <button id="nextBtn" onclick="nextPage()">Next</button>
+  </div>
+</div>
 
+<script>
+  const pages = document.querySelectorAll('.page');
+  let currentPage = 0;
+
+  function updatePages() {
+    pages.forEach((page, index) => {
+      if (index < currentPage) {
+        page.classList.add('flipped');
+        page.style.zIndex = pages.length - index; // Ochilgan sahifalar orqaga
+      } else {
+        page.classList.remove('flipped');
+        page.style.zIndex = pages.length - index; // Yopiq sahifalar oldinga
+      }
+    });
+    updateButtons();
+  }
+
+  function navigateToPage(targetPage) {
+    currentPage = targetPage;
+    updatePages();
+  }
+
+  function nextPage() {
+    if (currentPage < pages.length - 1) {
+      currentPage++;
+      updatePages();
+    }
+  }
+
+  function prevPage() {
+    if (currentPage > 0) {
+      currentPage--;
+      updatePages();
+    }
+  }
+
+  function updateButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    prevBtn.disabled = currentPage === 0;
+    nextBtn.disabled = currentPage === pages.length - 1;
+  }
+
+  // Klaviatura boshqaruvi
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextPage();
+    if (e.key === 'ArrowLeft') prevPage();
+  });
+
+  // Boshlang‘ich holat
+  updatePages();
+</script>
 </body>
 </html>
